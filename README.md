@@ -1,5 +1,7 @@
 # DevOps Intern Final Assessment
 
+![DevOps CI](https://github.com/georgelolu/devops-intern-final/actions/workflows/ci.yml/badge.svg)
+
 ## Student Information
 
 **Name:** George Omololu Akinbi  
