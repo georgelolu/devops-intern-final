@@ -32,3 +32,12 @@ Each stage produces an output that is used in the following stage.
 - GitHub Actions
 - HashiCorp Nomad
 - Grafana Loki
+
+## Step 3 - Docker
+
+The `hello.py` application was containerized using Docker.
+
+### Build the image
+
+```bash
+docker build -t devops-intern-final:1.0 .
