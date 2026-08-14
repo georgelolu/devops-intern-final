@@ -1,5 +1,1 @@
-import time
-
-while True:
-    print("Hello, DevOps!", flush=True)
-    time.sleep(30)
+print("Hello, DevOps!")
