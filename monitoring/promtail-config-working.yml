@@ -1,0 +1,19 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://host.docker.internal:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: docker
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: devops-intern
+          app: hello-devops
+          __path__: /var/lib/docker/containers/9cb76eda0a32e936ad6ab31cebcb37d33df5bbf94d75c68769a8c98f02d2cdd5/9cb76eda0a32e936ad6ab31cebcb37d33df5bbf94d75c68769a8c98f02d2cdd5-json.log

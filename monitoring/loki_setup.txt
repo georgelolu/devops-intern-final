@@ -1,0 +1,226 @@
+Grafana Loki Monitoring Setup
+=============================
+
+Application:
+devops-intern-final
+
+Nomad Job:
+hello-devops
+
+Loki:
+localhost:3100
+
+Promtail:
+Docker container log collector
+
+1. Start Loki
+
+docker run -d \
+  --name loki \
+  -p 3100:3100 \
+  ...
+
+2. Verify Loki
+
+curl http://localhost:3100/ready
+
+Expected:
+ready
+
+3. Start Promtail
+
+docker run -d \
+  --name promtail \
+  ...
+
+4. Verify Promtail
+
+docker logs promtail --tail 50
+
+5. Query logs
+
+curl -G -s \
+  --data-urlencode 'query={job="devops-intern"}' \
+  http://localhost:3100/loki/api/v1/query_range
+
+Expected log:
+
+Hello, DevOps!
+DEVOPS INTERN FINAL ASSESSMENT
+Step 6 - Monitoring with Grafana Loki
+
+Name: George Omololu Akinbi
+Date: August 14, 2026
+
+============================================================
+1. OBJECTIVE
+============================================================
+
+Grafana Loki was configured to collect Docker container logs.
+
+The monitoring flow is:
+
+Nomad
+  |
+  v
+Docker container
+  |
+  v
+Docker JSON logs
+  |
+  v
+Promtail
+  |
+  v
+Grafana Loki
+  |
+  v
+Loki HTTP API
+
+
+============================================================
+2. LOKI SETUP
+============================================================
+
+Loki was started locally using Docker.
+
+Command:
+
+docker run -d \
+  --name loki \
+  -p 3100:3100 \
+  grafana/loki:latest
+
+
+============================================================
+3. VERIFY LOKI
+============================================================
+
+Loki readiness was checked with:
+
+curl http://localhost:3100/ready
+
+Expected result:
+
+ready
+
+
+============================================================
+4. PROMTAIL SETUP
+============================================================
+
+Promtail was used to collect Docker container logs and forward
+them to Loki.
+
+Promtail was started with:
+
+docker run -d \
+  --name promtail \
+  -v ~/devops-intern-final/monitoring/promtail-config.yml:/etc/promtail/config.yml:ro \
+  -v /var/lib/docker/containers:/var/lib/docker/containers:ro \
+  -v promtail-positions:/tmp \
+  --add-host=host.docker.internal:host-gateway \
+  grafana/promtail:latest \
+  -config.file=/etc/promtail/config.yml
+
+
+============================================================
+5. PROMTAIL CONFIGURATION
+============================================================
+
+The Promtail configuration uses a wildcard to discover Docker
+JSON log files.
+
+Configuration file:
+
+monitoring/promtail-config.yml
+
+Important configuration:
+
+__path__: /var/lib/docker/containers/*/*-json.log
+
+This allows Promtail to discover Docker containers automatically
+without manually specifying a container ID.
+
+
+============================================================
+6. VERIFY PROMTAIL
+============================================================
+
+Promtail was verified using:
+
+docker ps --filter name=promtail
+
+Promtail logs were checked using:
+
+docker logs promtail --tail 50
+
+The logs confirmed that Promtail discovered Docker targets.
+
+Example:
+
+added Docker target containerID=9cb76eda...
+
+The container ID corresponds to the Nomad-managed Hello DevOps
+container.
+
+
+============================================================
+7. QUERY LOGS FROM LOKI
+============================================================
+
+Logs were queried directly from the Loki HTTP API.
+
+Command:
+
+curl -G -s \
+  --data-urlencode 'query={job="devops-intern",app="hello-devops"}' \
+  --data-urlencode 'limit=10' \
+  http://localhost:3100/loki/api/v1/query_range
+
+
+============================================================
+8. EXPECTED RESULT
+============================================================
+
+The Loki query successfully returned:
+
+Hello, DevOps!
+
+Example labels returned by Loki include:
+
+job="devops-intern"
+app="hello-devops"
+container="hello-89f9c515-..."
+container_id="9cb76eda0a32..."
+service_name="hello-devops"
+
+
+============================================================
+9. MONITORING VERIFICATION
+============================================================
+
+The monitoring pipeline was successfully verified.
+
+Evidence:
+
+1. Loki returned "ready".
+2. Promtail was running.
+3. Promtail discovered Docker container targets.
+4. Promtail successfully collected Docker logs.
+5. Loki successfully returned "Hello, DevOps!" log entries.
+6. Logs originated from the Nomad-managed Hello DevOps container.
+
+
+============================================================
+10. RESULT
+============================================================
+
+Grafana Loki monitoring has been successfully implemented.
+
+Docker logs are collected by Promtail and forwarded to Loki.
+
+The logs can be queried through the Loki HTTP API using LogQL.
+
+This completes the monitoring requirement for the DevOps Intern
+Final Assessment.
