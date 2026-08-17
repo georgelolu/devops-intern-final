@@ -20,3 +20,9 @@ jobs:
 
       - name: Run Hello DevOps
         run: python hello.py
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v7
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: http://localhost:9000
